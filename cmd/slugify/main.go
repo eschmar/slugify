@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/eschmar/slugify/slug"
+	"github.com/phasesoftware/slug"
 )
 
 // ANSI coloured output modes

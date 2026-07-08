@@ -1,3 +1,6 @@
+// Package slug converts strings to a "slugified" version: special
+// characters are replaced or removed such that the result still
+// represents the original meaning, but is easily parseable/pipeable.
 package slug
 
 import (
@@ -311,6 +314,9 @@ var replacementRules strings.Replacer = *strings.NewReplacer(
 	"&", "and",
 )
 
+// Ify returns a slugified version of the input string. Special
+// characters are transliterated or replaced, and any remaining
+// non-alphanumeric characters collapse into single separators.
 func Ify(input string) string {
 	result := replacementRules.Replace(input)
 

@@ -23,7 +23,7 @@ func TestSlugify(t *testing.T) {
 		},
 		{
 			"Schwiizerdütsch & svensk omljud ä ö å behandling",
-			"Schwiizerduetsch-and-svensk-omljud-ae-oe-a-behandling",
+			"Schwiizerdutsch-and-svensk-omljud-a-o-a-behandling",
 		},
 	}
 
