@@ -14,8 +14,8 @@ var (
 	regMultipleSeparators = regexp.MustCompile(`(-|_| )+`)
 )
 
-// Special characters replacement rules
-var replacementRules strings.Replacer = *strings.NewReplacer(
+// Shared special character replacement rules, applied by every style
+var commonPairs = []string{
 	"°", "0",
 	"¹", "1",
 	"²", "2",
@@ -244,17 +244,10 @@ var replacementRules strings.Replacer = *strings.NewReplacer(
 	"ы", "y",
 	"з", "z",
 	"ж", "zh",
-	"Ä", "A", // "Ae"
 	"Ç", "C",
 	"Ó", "O",
-	"Ö", "O", // "Oe"
-	"Ü", "U", // "Ue"
-	"ß", "s",
-	"ä", "a", // "ae"
 	"ç", "c",
 	"ó", "o",
-	"ö", "o", // "oe"
-	"ü", "u", // "ue"
 	"Ā", "A",
 	"ā", "a",
 	"Ą", "A",
@@ -312,13 +305,59 @@ var replacementRules strings.Replacer = *strings.NewReplacer(
 	"Ž", "Z",
 	"ž", "z",
 	"&", "and",
+}
+
+// A Style defines how umlauts and ß are transliterated. Use one of the
+// exported styles; the zero value behaves like Default.
+type Style struct {
+	replacer *strings.Replacer
+}
+
+func newStyle(stylePairs []string) Style {
+	pairs := make([]string, 0, len(commonPairs)+len(stylePairs))
+	pairs = append(pairs, commonPairs...)
+	pairs = append(pairs, stylePairs...)
+	return Style{replacer: strings.NewReplacer(pairs...)}
+}
+
+var (
+	// Default strips diacritics to their base character, e.g. "ü" to "u".
+	Default = newStyle([]string{
+		"Ä", "A",
+		"Ö", "O",
+		"Ü", "U",
+		"ä", "a",
+		"ö", "o",
+		"ü", "u",
+		"ß", "s",
+	})
+
+	// German transliterates umlauts and ß following the German
+	// convention (DIN 5007-2), e.g. "ü" to "ue" and "ß" to "ss".
+	German = newStyle([]string{
+		"Ä", "Ae",
+		"Ö", "Oe",
+		"Ü", "Ue",
+		"ä", "ae",
+		"ö", "oe",
+		"ü", "ue",
+		"ß", "ss",
+	})
+
+	// Digraphs is an alias for German.
+	Digraphs = German
 )
 
 // Ify returns a slugified version of the input string. Special
-// characters are transliterated or replaced, and any remaining
-// non-alphanumeric characters collapse into single separators.
-func Ify(input string) string {
-	result := replacementRules.Replace(input)
+// characters are transliterated or replaced according to the style,
+// and any remaining non-alphanumeric characters collapse into single
+// separators.
+func (s Style) Ify(input string) string {
+	if s.replacer == nil {
+		s = Default
+	}
+
+	result := s.replacer.Replace(input)
 
 	// remove all remaining non-alphanumeric characters
 	result = regNonAlphaNumeric.ReplaceAllString(result, separator)
@@ -330,4 +369,10 @@ func Ify(input string) string {
 	result = strings.Trim(result, "-_ ")
 
 	return result
+}
+
+// Ify returns a slugified version of the input string using the
+// Default style.
+func Ify(input string) string {
+	return Default.Ify(input)
 }

@@ -13,6 +13,9 @@ import "github.com/phasesoftware/slug"
 
 slug.Ify("Schwiizerdütsch & svensk omljud ä ö å behandling")
 // "Schwiizerdutsch-and-svensk-omljud-a-o-a-behandling"
+
+slug.German.Ify("Schwiizerdütsch & svensk omljud ä ö å behandling")
+// "Schwiizerduetsch-and-svensk-omljud-ae-oe-a-behandling"
 ```
 
 ## Command line utility
@@ -31,6 +34,7 @@ go install -v github.com/phasesoftware/slug/cmd/slugify@latest
 
 ```sh
 slugify "path/to/file"
+slugify -de "path/to/german/file" # umlauts as digraphs, e.g. ü→ue
 slugify path/with/wildcard*
 ls *.mp4 | xargs -d '\n' slugify # GNU xargs
 ls *.mp4 | tr \\n \\0 | xargs -0 slugify # macOS

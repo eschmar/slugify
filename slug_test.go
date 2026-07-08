@@ -15,21 +15,27 @@ func truncate(in string, max int) string {
 
 func TestSlugify(t *testing.T) {
 	tests := []struct {
+		style      Style
 		in, verify string
 	}{
 		{
-			" Importànt Dôcument (³)_copy final [36900fe]-compressed (((((8)))))---",
-			"Important-Document-3-copy-final-36900fe-compressed-8",
+			in:     " Importànt Dôcument (³)_copy final [36900fe]-compressed (((((8)))))---",
+			verify: "Important-Document-3-copy-final-36900fe-compressed-8",
 		},
 		{
-			"Schwiizerdütsch & svensk omljud ä ö å behandling",
-			"Schwiizerdutsch-and-svensk-omljud-a-o-a-behandling",
+			in:     "Schwiizerdütsch & svensk omljud ä ö å behandling",
+			verify: "Schwiizerdutsch-and-svensk-omljud-a-o-a-behandling",
+		},
+		{
+			style:  German,
+			in:     "Schwiizerdütsch & svensk omljud ä ö å behandling",
+			verify: "Schwiizerduetsch-and-svensk-omljud-ae-oe-a-behandling",
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("Test '%s'", truncate(test.in, 10)), func(t *testing.T) {
-			out := Ify(test.in)
+			out := test.style.Ify(test.in)
 
 			if out != test.verify {
 				t.Errorf("got '%s', want '%s'", out, test.verify)

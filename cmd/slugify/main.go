@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"path"
@@ -22,7 +23,15 @@ const (
 )
 
 func main() {
-	inputs := os.Args[1:]
+	german := flag.Bool("de", false, "transliterate umlauts and ß as digraphs (ä→ae, ö→oe, ü→ue, ß→ss)")
+	flag.Parse()
+
+	style := slug.Default
+	if *german {
+		style = slug.German
+	}
+
+	inputs := flag.Args()
 
 	total := len(inputs)
 	renamed := 0
@@ -42,7 +51,7 @@ func main() {
 		pathTo, name := path.Split(input)
 		name = strings.TrimSuffix(name, extension)
 
-		result := slug.Ify(name)
+		result := style.Ify(name)
 		if !info.IsDir() {
 			result = result + extension
 		}
