@@ -3,7 +3,7 @@
 A small Go package that converts strings to a "slugified" version. The slugified version refers here to a string that should still represent the original meaning, but remove most special characters. No consideration was given to performance, this is mostly to convert file names to ones more easily parseable/pipeable.
 
 ```sh
-go get -u github.com/phasesoftware/slug@v1.0.0
+go get -u github.com/phasesoftware/slug@v1.1.0
 ```
 
 ## Usage
